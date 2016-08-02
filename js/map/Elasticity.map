@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "Elasticity.js",
+  "sourceRoot": "../../src",
+  "sources": [
+    "Elasticity.coffee"
+  ],
+  "names": [],
+  "mappings": "AAGA,MAAM,CAAC,OAAP,GAEE;EAAA,KAAA,EAAO,SAAC,KAAD,EAAQ,QAAR,EAAkB,UAAlB;WACL,UAAA,GAAa,KAAb,GAAqB,QAArB,GAAgC,CAAC,QAAA,GAAW,KAAA,GAAQ,UAApB;EAD3B,CAAP;EAGA,KAAA,EAAO,SAAC,KAAD,EAAQ,QAAR,EAAkB,UAAlB;WACL,CAAA,GAAI,CAAC,UAAA,GAAa,KAAb,GAAqB,UAAA,GAAa,QAAnC;EADC,CAHP"
+}
