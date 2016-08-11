@@ -1,6 +1,6 @@
 var BrakeAnimation, Easing, Elasticity, NativeValue, Progress, TimingAnimation, Type, fromArgs, type;
 
-NativeValue = require("component").NativeValue;
+NativeValue = require("modx/native").NativeValue;
 
 TimingAnimation = require("TimingAnimation");
 
@@ -27,52 +27,48 @@ Easing.register("bounceIn", {
 type = Type("Rubberband");
 
 type.defineOptions({
-  maxOffset: Number,
+  value: NativeValue,
+  maxValue: Number.isRequired,
   elasticity: Number.withDefault(0.8),
   restVelocity: Number.withDefault(0.01)
 });
 
 type.defineFrozenValues({
-  maxOffset: fromArgs("maxOffset"),
+  maxValue: fromArgs("maxValue"),
   elasticity: fromArgs("elasticity"),
-  restVelocity: fromArgs("restVelocity")
-});
-
-type.defineValues({
-  _distance: function() {
-    return NativeValue(0);
+  restVelocity: fromArgs("restVelocity"),
+  _delta: function(options) {
+    return options.value || NativeValue(0);
   }
 });
 
 type.defineReactiveValues({
-  _offset: 0,
   _rebounding: false
 });
 
 type.defineGetters({
-  distance: function() {
-    return this._distance.value;
-  },
   isRebounding: function() {
-    return this._distance.isAnimating;
+    return this._delta.isAnimating;
   }
 });
 
 type.definePrototype({
-  offset: {
+  delta: {
     get: function() {
-      return this._offset;
+      return this._delta.value;
     },
-    set: function(offset) {
-      this._offset = Math.abs(offset);
-      this._distance.value = Elasticity.apply(this._offset, this.maxOffset, this.elasticity);
+    set: function(newValue) {
+      this._delta.value = newValue;
     }
   }
 });
 
 type.defineMethods({
+  resist: function() {
+    return Elasticity.apply(Math.abs(this.delta), this.maxValue, this.elasticity);
+  },
   rebound: function(startVelocity) {
-    if (this._distance.value === 0) {
+    if (this.delta === 0) {
       return;
     }
     if ((Math.abs(startVelocity)) <= this.restVelocity) {
@@ -81,10 +77,10 @@ type.defineMethods({
     if (startVelocity > 0) {
       return this._bounceOut(startVelocity);
     }
-    return this._bounceIn(1200);
+    return this._bounceIn(700);
   },
   stopRebounding: function() {
-    this._distance.stopAnimation();
+    this._delta.stopAnimation();
   },
   _bounceOut: function(startVelocity) {
     var durationPercent, durationRange;
@@ -94,20 +90,20 @@ type.defineMethods({
       toValue: 800,
       clamp: true
     };
-    return this._visualOffset.animate({
+    return this._delta.animate({
       type: BrakeAnimation,
       easing: Easing("bounceOut"),
       velocity: startVelocity,
       duration: Progress.toValue(durationPercent, durationRange),
       onEnd: (function(_this) {
         return function(finished) {
-          return finished && _this._bounceIn(duration);
+          return finished && _this._bounceIn(700);
         };
       })(this)
     });
   },
   _bounceIn: function(duration) {
-    return this._visualOffset.animate({
+    return this._delta.animate({
       type: TimingAnimation,
       easing: Easing("bounceIn"),
       endValue: 0,

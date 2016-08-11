@@ -1,5 +1,5 @@
 
-{NativeValue} = require "component"
+{NativeValue} = require "modx/native"
 
 TimingAnimation = require "TimingAnimation"
 BrakeAnimation = require "BrakeAnimation"
@@ -20,69 +20,67 @@ Easing.register "bounceIn",
 type = Type "Rubberband"
 
 type.defineOptions
-  maxOffset: Number
+  value: NativeValue
+  maxValue: Number.isRequired
   elasticity: Number.withDefault 0.8
   restVelocity: Number.withDefault 0.01
 
 type.defineFrozenValues
 
-  maxOffset: fromArgs "maxOffset"
+  maxValue: fromArgs "maxValue"
 
   elasticity: fromArgs "elasticity"
 
   restVelocity: fromArgs "restVelocity"
 
-type.defineValues
-
-  _distance: -> NativeValue 0
+  _delta: (options) ->
+    options.value or NativeValue 0
 
 type.defineReactiveValues
-
-  _offset: 0
 
   _rebounding: no
 
 type.defineGetters
 
-  distance: -> @_distance.value
-
-  isRebounding: -> @_distance.isAnimating
+  isRebounding: -> @_delta.isAnimating
 
 type.definePrototype
 
-  offset:
-    get: -> @_offset
-    set: (offset) ->
-      @_offset = Math.abs offset
-      @_distance.value = Elasticity.apply @_offset, @maxOffset, @elasticity
+  delta:
+    get: -> @_delta.value
+    set: (newValue) ->
+      @_delta.value = newValue
       return
 
 type.defineMethods
 
+  resist: ->
+    Elasticity.apply Math.abs(@delta), @maxValue, @elasticity
+
   rebound: (startVelocity) ->
-    return if @_distance.value is 0
+    return if @delta is 0
     startVelocity = 0 if (Math.abs startVelocity) <= @restVelocity
     if startVelocity > 0
       return @_bounceOut startVelocity
-    return @_bounceIn 1200 # TODO: Adjust duration based on velocity.
+    return @_bounceIn 700 # TODO: Adjust duration based on velocity.
 
   stopRebounding: ->
-    @_distance.stopAnimation()
+    @_delta.stopAnimation()
     return
 
   _bounceOut: (startVelocity) ->
     durationPercent = Math.abs startVelocity / 10
     durationRange = { fromValue: 300, toValue: 800, clamp: yes }
-    @_visualOffset.animate
+    @_delta.animate
       type: BrakeAnimation
       easing: Easing "bounceOut"
       velocity: startVelocity
       duration: Progress.toValue durationPercent, durationRange
       onEnd: (finished) =>
-        finished and @_bounceIn duration # * 2.6
+        finished and @_bounceIn 700 # * 2.6
 
   _bounceIn: (duration) ->
-    @_visualOffset.animate
+    @_delta.animate
       type: TimingAnimation
       easing: Easing "bounceIn"
       endValue: 0
