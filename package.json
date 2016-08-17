@@ -12,7 +12,6 @@
     "TimingAnimation": "aleclarson/TimingAnimation#1.0.0",
     "Type": "aleclarson/Type#1.1.0",
     "easing": "aleclarson/easing#1.0.0",
-    "fromArgs": "aleclarson/fromArgs#1.0.0",
     "modx": "aleclarson/modx#1.0.0",
     "progress": "aleclarson/progress#1.0.0"
   }

@@ -3,7 +3,6 @@
 
 TimingAnimation = require "TimingAnimation"
 BrakeAnimation = require "BrakeAnimation"
-fromArgs = require "fromArgs"
 Progress = require "progress"
 Easing = require "easing"
 Type = require "Type"
@@ -25,16 +24,15 @@ type.defineOptions
   elasticity: Number.withDefault 0.8
   restVelocity: Number.withDefault 0.01
 
-type.defineFrozenValues
+type.defineFrozenValues (options) ->
 
-  maxValue: fromArgs "maxValue"
+  maxValue: options.maxValue
 
-  elasticity: fromArgs "elasticity"
+  elasticity: options.elasticity
 
-  restVelocity: fromArgs "restVelocity"
+  restVelocity: options.restVelocity
 
-  _delta: (options) ->
-    options.value or NativeValue 0
+  _delta: options.value or NativeValue 0
 
 type.defineReactiveValues
 

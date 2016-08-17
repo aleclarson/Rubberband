@@ -1,12 +1,10 @@
-var BrakeAnimation, Easing, Elasticity, NativeValue, Progress, TimingAnimation, Type, fromArgs, type;
+var BrakeAnimation, Easing, Elasticity, NativeValue, Progress, TimingAnimation, Type, type;
 
 NativeValue = require("modx/native").NativeValue;
 
 TimingAnimation = require("TimingAnimation");
 
 BrakeAnimation = require("BrakeAnimation");
-
-fromArgs = require("fromArgs");
 
 Progress = require("progress");
 
@@ -33,13 +31,13 @@ type.defineOptions({
   restVelocity: Number.withDefault(0.01)
 });
 
-type.defineFrozenValues({
-  maxValue: fromArgs("maxValue"),
-  elasticity: fromArgs("elasticity"),
-  restVelocity: fromArgs("restVelocity"),
-  _delta: function(options) {
-    return options.value || NativeValue(0);
-  }
+type.defineFrozenValues(function(options) {
+  return {
+    maxValue: options.maxValue,
+    elasticity: options.elasticity,
+    restVelocity: options.restVelocity,
+    _delta: options.value || NativeValue(0)
+  };
 });
 
 type.defineReactiveValues({
