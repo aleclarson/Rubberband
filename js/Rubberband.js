@@ -1,10 +1,18 @@
-var BrakeAnimation, Easing, Elasticity, NativeValue, Progress, TimingAnimation, Type, type;
+var Easing, Elasticity, NativeValue, Number, ParabolicAnimation, Progress, TimingAnimation, Type, assertType, emptyFunction, type;
+
+require("isDev");
 
 NativeValue = require("modx/native").NativeValue;
 
+Number = require("Nan").Number;
+
+ParabolicAnimation = require("ParabolicAnimation");
+
 TimingAnimation = require("TimingAnimation");
 
-BrakeAnimation = require("BrakeAnimation");
+emptyFunction = require("emptyFunction");
+
+assertType = require("assertType");
 
 Progress = require("progress");
 
@@ -14,34 +22,26 @@ Type = require("Type");
 
 Elasticity = require("./Elasticity");
 
-Easing.register("bounceOut", {
-  value: Easing.bezier(0, 0.65, 0.35, 0.9)
-});
-
-Easing.register("bounceIn", {
-  value: Easing.bezier(0.4, 0.2, 0.5, 1)
-});
-
 type = Type("Rubberband");
 
 type.defineOptions({
-  value: NativeValue,
   maxValue: Number.isRequired,
+  maxVelocity: Number.isRequired,
   elasticity: Number.withDefault(0.8),
-  restVelocity: Number.withDefault(0.01)
+  restVelocity: Number.withDefault(0.01),
+  getDuration: Function
 });
 
 type.defineFrozenValues(function(options) {
   return {
     maxValue: options.maxValue,
+    maxVelocity: options.maxVelocity,
     elasticity: options.elasticity,
     restVelocity: options.restVelocity,
-    _delta: options.value || NativeValue(0)
+    _delta: NativeValue(0),
+    _easing: options.easing,
+    __getDuration: options.getDuration
   };
-});
-
-type.defineReactiveValues({
-  _rebounding: false
 });
 
 type.defineGetters({
@@ -61,52 +61,57 @@ type.definePrototype({
   }
 });
 
+type.defineHooks({
+  __getDuration: function(velocity, delta) {
+    var minDuration;
+    if (velocity > 0) {
+      minDuration = 100 + 200 * Math.min(1, delta / 200);
+      return minDuration + 300 * Math.min(1, velocity / this.maxVelocity);
+    }
+    return 400 + 200 * Math.min(1, delta / 200);
+  }
+});
+
 type.defineMethods({
   resist: function() {
     return Elasticity.apply(Math.abs(this.delta), this.maxValue, this.elasticity);
   },
-  rebound: function(startVelocity) {
-    if (this.delta === 0) {
-      return;
+  rebound: function(config) {
+    if (this._anim) {
+      return this._anim;
     }
-    if ((Math.abs(startVelocity)) <= this.restVelocity) {
-      startVelocity = 0;
+    isDev && assertType(config.velocity, Number);
+    if (this.restVelocity >= Math.abs(config.velocity)) {
+      config.velocity = 0;
     }
-    if (startVelocity > 0) {
-      return this._bounceOut(startVelocity);
+    if (config.velocity <= 0) {
+      return this._reboundIn(config);
+    } else {
+      return this._reboundOut(config);
     }
-    return this._bounceIn(700);
   },
   stopRebounding: function() {
     this._delta.stopAnimation();
   },
-  _bounceOut: function(startVelocity) {
-    var durationPercent, durationRange;
-    durationPercent = Math.abs(startVelocity / 10);
-    durationRange = {
-      fromValue: 300,
-      toValue: 800,
-      clamp: true
-    };
-    return this._delta.animate({
-      type: BrakeAnimation,
-      easing: Easing("bounceOut"),
-      velocity: startVelocity,
-      duration: Progress.toValue(durationPercent, durationRange),
-      onEnd: (function(_this) {
-        return function(finished) {
-          return finished && _this._bounceIn(700);
-        };
-      })(this)
-    });
+  _getDuration: function(velocity) {
+    var duration;
+    duration = this.__getDuration(velocity, this.delta);
+    assertType(duration, Number);
+    return duration;
   },
-  _bounceIn: function(duration) {
-    return this._delta.animate({
-      type: TimingAnimation,
-      easing: Easing("bounceIn"),
-      endValue: 0,
-      duration: duration
-    });
+  _reboundIn: function(config) {
+    config.type = TimingAnimation;
+    config.easing = Easing.bezier(0, 0.3, 0.5, 1);
+    config.endValue = 0;
+    config.duration = this._getDuration(config.velocity, this._delta._value);
+    return global.$ANIM = this._delta.animate(config);
+  },
+  _reboundOut: function(config) {
+    config.type = ParabolicAnimation;
+    config.easing = Easing.bezier(0.15, 0.3, 0.5, 1);
+    config.endValue = 0;
+    config.duration = this._getDuration(config.velocity, this._delta._value);
+    return global.$ANIM = this._delta.animate(config);
   }
 });
 
