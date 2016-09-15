@@ -39,6 +39,13 @@ type.defineFrozenValues (options) ->
 
   __getDuration: options.getDuration
 
+type.initInstance ->
+  @_delta.__attach()
+
+#
+# Prototype
+#
+
 type.defineGetters
 
   isRebounding: -> @_delta.isAnimating
