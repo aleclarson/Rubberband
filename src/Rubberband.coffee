@@ -1,6 +1,4 @@
 
-require "isDev"
-
 {NativeValue} = require "modx/native"
 {Number} = require "Nan"
 
@@ -10,6 +8,7 @@ emptyFunction = require "emptyFunction"
 assertType = require "assertType"
 Progress = require "progress"
 Easing = require "easing"
+isDev = require "isDev"
 Type = require "Type"
 
 Elasticity = require "./Elasticity"
