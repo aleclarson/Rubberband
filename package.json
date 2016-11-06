@@ -10,6 +10,7 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
+    "Animated": "aleclarson/Animated#2.1.0",
     "Nan": "aleclarson/Nan#1.1.0",
     "ParabolicAnimation": "aleclarson/ParabolicAnimation#1.0.0",
     "TimingAnimation": "aleclarson/TimingAnimation#1.0.0",
@@ -18,7 +19,6 @@
     "easing": "aleclarson/easing#2.0.0",
     "emptyFunction": "aleclarson/emptyFunction#1.0.0",
     "isDev": "aleclarson/isDev#2.0.0",
-    "modx": "aleclarson/modx#1.0.0",
     "progress": "aleclarson/progress#1.0.0"
   }
 }

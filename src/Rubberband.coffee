@@ -1,5 +1,5 @@
 
-{NativeValue} = require "modx/native"
+{AnimatedValue} = require "Animated"
 {Number} = require "Nan"
 
 ParabolicAnimation = require "ParabolicAnimation"
@@ -32,14 +32,11 @@ type.defineFrozenValues (options) ->
 
   restVelocity: options.restVelocity
 
-  _delta: NativeValue 0
+  _delta: AnimatedValue 0
 
   _easing: options.easing
 
   __getDuration: options.getDuration
-
-type.initInstance ->
-  @_delta.__attach()
 
 #
 # Prototype
@@ -52,10 +49,9 @@ type.defineGetters
 type.definePrototype
 
   delta:
-    get: -> @_delta.value
+    get: -> @_delta.get()
     set: (newValue) ->
-      @_delta.value = newValue
-      return
+      @_delta.set newValue
 
 type.defineHooks
 
