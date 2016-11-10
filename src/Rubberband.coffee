@@ -66,7 +66,7 @@ type.defineMethods
   resist: ->
     Elasticity.apply Math.abs(@delta), @maxValue, @elasticity
 
-  # NOTE: `config.velocity` must be positive when rebounding AWAY from `config.endValue`.
+  # NOTE: `config.velocity` must be positive when rebounding AWAY from `config.toValue`.
   #       This is due to the Rubberband not having a `startValue`.
   rebound: (config) ->
     return @_anim if @_anim
@@ -93,16 +93,16 @@ type.defineMethods
   _reboundIn: (config) ->
     config.type = TimingAnimation
     config.easing = Easing.bezier 0, 0.3, 0.5, 1
-    config.endValue = 0
+    config.toValue = 0
     config.duration = @_getDuration config.velocity, @_delta._value
-    global.$ANIM = @_delta.animate config
+    return @_delta.animate config
 
   _reboundOut: (config) ->
     config.type = ParabolicAnimation
     config.easing = Easing.bezier 0.15, 0.3, 0.5, 1
-    config.endValue = 0
+    config.toValue = 0
     config.duration = @_getDuration config.velocity, @_delta._value
-    global.$ANIM = @_delta.animate config
+    return @_delta.animate config
 
 type.defineStatics {Elasticity}
 
