@@ -1,0 +1,10 @@
+{
+  "name": "Rubberband",
+  "version": "1.0.0",
+  "main": "js/Rubberband",
+  "lotus": {
+    "plugins": [
+      "lotus-coffee"
+    ]
+  }
+}
