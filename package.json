@@ -10,15 +10,15 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
-    "Animated": "aleclarson/Animated#2.1.0",
-    "Nan": "aleclarson/Nan#1.1.0",
-    "ParabolicAnimation": "aleclarson/ParabolicAnimation#1.0.0",
-    "TimingAnimation": "aleclarson/TimingAnimation#1.0.0",
-    "Type": "aleclarson/Type#1.1.0",
-    "assertType": "aleclarson/assertType#2.0.0",
-    "easing": "aleclarson/easing#2.0.0",
+    "Animated": "aleclarson/Animated#3.5.0",
+    "Nan": "aleclarson/Nan#1.1.1",
+    "ParabolicAnimation": "aleclarson/ParabolicAnimation#1.1.0",
+    "TimingAnimation": "aleclarson/TimingAnimation#1.1.0",
+    "Type": "aleclarson/Type#2.2.0",
+    "assertType": "aleclarson/assertType#2.0.1",
+    "easing": "aleclarson/easing#3.1.0",
     "emptyFunction": "aleclarson/emptyFunction#1.0.0",
     "isDev": "aleclarson/isDev#2.0.0",
-    "progress": "aleclarson/progress#1.0.0"
+    "progress": "aleclarson/progress#1.0.1"
   }
 }
