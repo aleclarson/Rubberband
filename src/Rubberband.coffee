@@ -15,12 +15,22 @@ Elasticity = require "./Elasticity"
 
 type = Type "Rubberband"
 
-type.defineOptions
-  maxValue: Number.isRequired
-  maxVelocity: Number.isRequired
-  elasticity: Number.withDefault 0.8
-  restVelocity: Number.withDefault 0.01
-  getDuration: Function
+type.defineArgs ->
+
+  required:
+    maxValue: yes
+    maxVelocity: yes
+
+  types:
+    maxValue: Number
+    maxVelocity: Number
+    elasticity: Number
+    restVelocity: Number
+    getDuration: Function
+
+  defaults:
+    elasticity: 0.8
+    restVelocity: 0.01
 
 type.defineFrozenValues (options) ->
 
